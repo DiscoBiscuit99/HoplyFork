@@ -64,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
             postsIntent.putExtra( "user-id", userId );
             postsIntent.putExtra( "nickname", nickname );
             startActivity( postsIntent );
+            finish();
 
         } else {
 
