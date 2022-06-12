@@ -33,10 +33,11 @@ public abstract class HoplyDB extends RoomDatabase {
                     INSTANCE =
                         Room.databaseBuilder(
                                 context.getApplicationContext(),
-                                HoplyDB.class, "HOPLY_DB"
-                        ).fallbackToDestructiveMigration()
-                        .addCallback( roomCallback )
-                        .build();
+                                HoplyDB.class,
+                                "HOPLY_DB" )
+                            .fallbackToDestructiveMigration()
+                            .addCallback( roomCallback ) // TODO: rmeove
+                            .build();
 
             }
 
@@ -44,6 +45,7 @@ public abstract class HoplyDB extends RoomDatabase {
 
     }
 
+    /// TODO: remove ////////////////
     private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
 
         @Override
@@ -76,5 +78,6 @@ public abstract class HoplyDB extends RoomDatabase {
         }
 
     }
+    /// TODO ends ///////////////////////
 
 }
