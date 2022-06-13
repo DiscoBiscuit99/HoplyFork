@@ -37,12 +37,14 @@ public class LoginActivity extends AppCompatActivity {
             @RequiresApi( api = Build.VERSION_CODES.N )
             @Override
             public void onClick( View v ) {
+
                 String userId =
                     ( (TextView) findViewById( R.id.id_edit_login ) )
                         .getText()
                         .toString();
 
                 login( userId );
+
             }
 
         } );
