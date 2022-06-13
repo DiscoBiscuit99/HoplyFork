@@ -12,5 +12,4 @@
     <string name="like_btn_text">Like</string>
     <string name="dislike_btn_text">Like</string>
     <string name="comment_btn_text">Comment</string>
-    <string name="title_activity_maps">Location</string>
 </resources>
