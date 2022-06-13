@@ -9,7 +9,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database( version = 6, entities = { User.class, Post.class }, exportSchema = false )
+@Database( version = 6, entities = { User.class, Post.class}, exportSchema = false )
 public abstract class HoplyDB extends RoomDatabase {
 
     public abstract UserDao userDao();
