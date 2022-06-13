@@ -20,6 +20,7 @@ import java.util.List;
 import xyz.discobiscuit.hoplyfork.R;
 import xyz.discobiscuit.hoplyfork.database.HoplyRepository;
 import xyz.discobiscuit.hoplyfork.database.Post;
+import xyz.discobiscuit.hoplyfork.database.Reaction;
 import xyz.discobiscuit.hoplyfork.viewmodel.PostAdapter;
 import xyz.discobiscuit.hoplyfork.viewmodel.PostViewModel;
 
@@ -54,12 +55,21 @@ public class PostsActivity extends AppCompatActivity {
         postsRecyclerView.setAdapter( postAdapter );
 
         postViewModel = new ViewModelProvider( this ).get( PostViewModel.class );
+
         postViewModel.getAllPosts().observe( this, new Observer<List<Post>>() {
 
             @Override
             public void onChanged( List<Post> posts ) {
-                // TODO: update recycler view.
                 postAdapter.setPosts( posts );
+            }
+
+        } );
+
+        postViewModel.getAllReactions().observe( this, new Observer<List<Reaction>>() {
+
+            @Override
+            public void onChanged( List<Reaction> reactions ) {
+                postAdapter.setReactions( reactions );
             }
 
         } );

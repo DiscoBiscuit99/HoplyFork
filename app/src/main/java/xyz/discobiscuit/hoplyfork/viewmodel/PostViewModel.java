@@ -7,24 +7,39 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
+import java.util.Optional;
 
 import xyz.discobiscuit.hoplyfork.database.HoplyRepository;
 import xyz.discobiscuit.hoplyfork.database.Post;
+import xyz.discobiscuit.hoplyfork.database.Reaction;
 
 public class PostViewModel extends AndroidViewModel {
 
+    private HoplyRepository repository;
+
     private LiveData<List<Post>> allPosts;
+    private LiveData<List<Reaction>> allReactions;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public PostViewModel(@NonNull Application app ) {
 
         super( app );
-        allPosts = HoplyRepository
-                .getInstance( getApplication().getApplicationContext() )
-                .getAllPosts()
-                .get();
+
+        repository = HoplyRepository
+                .getInstance( getApplication().getApplicationContext() );
+
+        if ( repository.getAllPosts().isPresent() )
+            allPosts = repository.getAllPosts().get();
+        else
+            allPosts = new MutableLiveData<List<Post>>();
+
+        if ( repository.getAllReactions().isPresent() )
+            allReactions = repository.getAllReactions().get();
+        else
+            allReactions = new MutableLiveData<List<Reaction>>();
 
     }
 
@@ -36,8 +51,14 @@ public class PostViewModel extends AndroidViewModel {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public LiveData<List<Post>> getAllPosts() {
         return allPosts;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public LiveData<List<Reaction>> getAllReactions() {
+            return allReactions;
     }
 
 }

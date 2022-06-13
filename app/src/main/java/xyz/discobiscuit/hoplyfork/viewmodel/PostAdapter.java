@@ -6,10 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -19,16 +22,22 @@ import java.util.Optional;
 import xyz.discobiscuit.hoplyfork.R;
 import xyz.discobiscuit.hoplyfork.database.HoplyRepository;
 import xyz.discobiscuit.hoplyfork.database.Post;
+import xyz.discobiscuit.hoplyfork.database.Reaction;
 import xyz.discobiscuit.hoplyfork.database.User;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
+    private HoplyRepository repository;
+
     private List<Post> posts = new ArrayList<>();
+    private List<Reaction> reactions = new ArrayList<>();
     private Context context;
 
     @NonNull
     @Override
     public PostHolder onCreateViewHolder( @NonNull ViewGroup parent, int viewType ) {
+
+        repository = HoplyRepository.getInstance( context.getApplicationContext() );
 
         View itemView =
                 LayoutInflater
@@ -45,10 +54,30 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
         Post currentPost = posts.get( position );
 
-        Optional<User> userOfPost =
-                HoplyRepository
-                        .getInstance( context )
-                        .findUserById( currentPost.userId );
+        LiveData<List<Reaction>> likes;
+        LiveData<List<Reaction>> dislikes;
+
+        if ( repository.getAllLikes().isPresent() )
+            likes = repository.getAllLikes().get();
+        else
+            likes = new MutableLiveData<>();
+
+        if ( repository.getAllDislikes().isPresent() )
+            dislikes = repository.getAllDislikes().get();
+        else
+            dislikes = new MutableLiveData<>();
+
+        int likeCount = 0;
+
+        if ( likes.getValue() != null )
+            likeCount = likes.getValue().size();
+
+        int dislikeCount = 0;
+
+        if ( dislikes.getValue() != null )
+            dislikeCount = dislikes.getValue().size();
+
+        Optional<User> userOfPost = repository.findUserById( currentPost.userId );
 
         String nickname = "Unknown...";
         if ( userOfPost.isPresent() )
@@ -56,6 +85,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
         holder.textViewNickname.setText( nickname );
         holder.textViewContent.setText( currentPost.content );
+        holder.likeBtn.setText( "Like " + likeCount );
+        holder.dislikeBtn.setText( "Dislike " + dislikeCount );
 
     }
 
@@ -71,6 +102,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
     }
 
+    public void setReactions( List<Reaction> reactions ) {
+
+        this.reactions = reactions;
+        notifyDataSetChanged();
+
+    }
+
     public void context( Context context ) {
         this.context = context;
     }
@@ -79,6 +117,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
         private TextView textViewNickname;
         private TextView textViewContent;
+        private Button likeBtn;
+        private Button dislikeBtn;
 
         public PostHolder( @NonNull View itemView ) {
 
@@ -86,6 +126,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
             textViewNickname = itemView.findViewById( R.id.nickname_text_view );
             textViewContent = itemView.findViewById( R.id.content_text_view );
+            likeBtn = itemView.findViewById( R.id.like_btn );
+            dislikeBtn = itemView.findViewById( R.id.dislike_btn );
+
+            likeBtn.setOnClickListener( new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    repository.insertReactions( new Reaction( "disco", 0, 0 ) );
+                }
+
+            } );
 
         }
 
