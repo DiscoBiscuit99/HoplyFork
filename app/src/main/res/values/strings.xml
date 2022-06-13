@@ -7,5 +7,9 @@
     <string name="logged_in_as_text">Logged in as</string>
     <string name="post_content_hint">Post content</string>
     <string name="new_post_btn">New post</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="default_like_count">0</string>
+    <string name="default_dislike_count">0</string>
+    <string name="like_btn_text">Like</string>
+    <string name="dislike_btn_text">Like</string>
+    <string name="comment_btn_text">Comment</string>
 </resources>
