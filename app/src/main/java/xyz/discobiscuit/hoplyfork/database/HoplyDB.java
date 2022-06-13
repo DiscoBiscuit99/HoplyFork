@@ -9,7 +9,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database( version = 6, entities = { User.class, Post.class}, exportSchema = false )
+@Database( version = 6, entities = { User.class, Post.class }, exportSchema = false )
 public abstract class HoplyDB extends RoomDatabase {
 
     public abstract UserDao userDao();
@@ -61,16 +61,14 @@ public abstract class HoplyDB extends RoomDatabase {
     private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Void> {
 
         private PostDao postDao;
-        private UserDao userDao;
 
         private PopulateDbAsyncTask( HoplyDB database ) {
             postDao = database.postDao();
-            userDao = database.userDao();
         }
 
         @Override
         protected Void doInBackground( Void... voids ) {
-            userDao.insert( new User("disco", "Valdemar"));
+
             postDao.insert( new Post( "disco", "Content 1" ) );
             postDao.insert( new Post( "disco", "Content 2" ) );
             postDao.insert( new Post( "disco", "Content 3" ) );

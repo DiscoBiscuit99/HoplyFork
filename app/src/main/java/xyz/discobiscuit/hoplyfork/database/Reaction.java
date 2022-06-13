@@ -2,6 +2,7 @@ package xyz.discobiscuit.hoplyfork.database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 @Entity
 public class Reaction {
@@ -15,6 +16,7 @@ public class Reaction {
     @ColumnInfo( name = "type" )
     public int type;
 
+    @PrimaryKey
     @ColumnInfo( name = "stamp" )
     public double stamp;
 

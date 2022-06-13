@@ -6,7 +6,10 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -19,6 +22,7 @@ public class HoplyRepository {
     private static ExecutorService executor;
     private static UserDao userDao;
     private static PostDao postDao;
+    private static ReactionDao reactionDao;
 
     private static volatile HoplyRepository INSTANCE;
 
@@ -29,11 +33,12 @@ public class HoplyRepository {
         this.executor = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
         this.userDao = database.userDao();
         this.postDao = database.postDao();
+        this.reactionDao = database.reactionDao();
 
     }
 
     // Singleton Structure:
-    public static HoplyRepository getInstance(Context context ) {
+    public static HoplyRepository getInstance( Context context ) {
 
         if ( INSTANCE == null )
             synchronized ( HoplyDB.class ) {
@@ -47,12 +52,14 @@ public class HoplyRepository {
 
     }
 
+    /// USER RELATED METHODS ///
+
     public void insertUser( User user ) {
         new InsertUserAsyncTask( userDao ).execute( user );
     }
 
     @RequiresApi( api = Build.VERSION_CODES.N )
-    public Optional<User> findUserById(String id ) {
+    public Optional<User> findUserById( String id ) {
 
         Future<User> userFuture =
                 executor.submit( () -> userDao.findById( id ) );
@@ -67,10 +74,13 @@ public class HoplyRepository {
                 return Optional.of( userFuture.get() );
 
         } catch ( ExecutionException | InterruptedException e ) {
+            e.printStackTrace();
             return Optional.empty();
         }
 
     }
+
+    /// POST RELATED METHODS ///
 
     public void insertPosts( Post... posts ) {
         new InsertPostsAsyncTask( postDao ).execute( posts );
@@ -89,9 +99,10 @@ public class HoplyRepository {
             if ( posts == null )
                 return Optional.empty();
             else
-                return Optional.of( postsFuture.get() );
+                return Optional.of( posts );
 
         } catch ( ExecutionException | InterruptedException e ) {
+            e.printStackTrace();
             return Optional.empty();
         }
 
@@ -100,6 +111,80 @@ public class HoplyRepository {
     public void deleteAllPosts() {
         new DeleteAllPostsAsyncTask( postDao ).execute();
     }
+
+    /// REACTION RELATED METHODS ///
+
+    @RequiresApi( api = Build.VERSION_CODES.N )
+    public Optional<LiveData<List<Reaction>>> getAllReactions() {
+
+        Future<LiveData<List<Reaction>>> reactionsFuture =
+                executor.submit( () -> reactionDao.getAll() );
+
+        try {
+
+            LiveData<List<Reaction>> reactions = reactionsFuture.get();
+
+            if ( reactions.getValue() == null ) {
+                return Optional.empty();
+            } else
+                return Optional.of( reactions );
+
+        } catch ( ExecutionException | InterruptedException e ) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+
+    }
+
+    @RequiresApi( api = Build.VERSION_CODES.N )
+    public Optional<LiveData<List<Reaction>>> getAllLikes() {
+
+        Future<LiveData<List<Reaction>>> likesFuture =
+                executor.submit( () -> reactionDao.getAllLikes() );
+
+        try {
+
+            LiveData<List<Reaction>> reactions = likesFuture.get();
+
+            if ( reactions.getValue() == null ) {
+                return Optional.empty();
+            } else
+                return Optional.of( reactions );
+
+        } catch ( ExecutionException | InterruptedException e ) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+
+    }
+
+    @RequiresApi( api = Build.VERSION_CODES.N )
+    public Optional<LiveData<List<Reaction>>> getAllDislikes() {
+
+        Future<LiveData<List<Reaction>>> dislikesFuture =
+                executor.submit( () -> reactionDao.getAllDislikes() );
+
+        try {
+
+            LiveData<List<Reaction>> reactions = dislikesFuture.get();
+
+            if ( reactions.getValue() == null ) {
+                return Optional.empty();
+            } else
+                return Optional.of( reactions );
+
+        } catch ( ExecutionException | InterruptedException e ) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+
+    }
+
+    public void insertReactions( Reaction... reactions ) {
+        new InsertReactionsAsyncTask( reactionDao ).execute( reactions );
+    }
+
+    /// ASYNC TASKS ///
 
     private static class InsertUserAsyncTask extends AsyncTask<User, Void, Void> {
 
@@ -112,7 +197,7 @@ public class HoplyRepository {
         @Override
         protected Void doInBackground( User... users ) {
 
-            userDao.insert( users[0] );
+            userDao.insert( users[ 0 ] );
             return null;
 
         }
@@ -151,6 +236,26 @@ public class HoplyRepository {
         protected Void doInBackground( Void... voids ) {
 
             postDao.deleteAll();
+            return null;
+
+        }
+
+    }
+
+    private static class InsertReactionsAsyncTask extends AsyncTask<Reaction, Void, Void> {
+
+        private ReactionDao reactionDao;
+
+        private InsertReactionsAsyncTask( ReactionDao reactionDao ) {
+            this.reactionDao = reactionDao;
+        }
+
+        @Override
+        protected Void doInBackground( Reaction... reactions ) {
+
+            for ( Reaction reaction : reactions )
+                reactionDao.insert( reaction );
+
             return null;
 
         }
