@@ -61,14 +61,16 @@ public abstract class HoplyDB extends RoomDatabase {
     private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Void> {
 
         private PostDao postDao;
+        private UserDao userDao;
 
         private PopulateDbAsyncTask( HoplyDB database ) {
             postDao = database.postDao();
+            userDao = database.userDao();
         }
 
         @Override
         protected Void doInBackground( Void... voids ) {
-
+            userDao.insert( new User("disco", "Valdemar"));
             postDao.insert( new Post( "disco", "Content 1" ) );
             postDao.insert( new Post( "disco", "Content 2" ) );
             postDao.insert( new Post( "disco", "Content 3" ) );

@@ -13,13 +13,17 @@ import androidx.room.PrimaryKey;
 //        onDelete = ForeignKey.CASCADE
 //    )
 //} )
-@Entity
+@Entity   (foreignKeys = {@ForeignKey(entity = User.class,
+        parentColumns = "id",
+        childColumns = "user_id",
+        onDelete = ForeignKey.CASCADE)
+})
 public class Post {
 
     @PrimaryKey( autoGenerate = true )
     public int id;
 
-    @ColumnInfo( name = "user_id" )
+    @ColumnInfo( name = "user_id", index = true )
     public String userId;
 
     @ColumnInfo( name = "content" )
