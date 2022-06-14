@@ -26,7 +26,6 @@ public class StartActivity extends AppCompatActivity {
 
         Button createUserBtn = findViewById( R.id.create_user_btn );
         Button loginBtn = findViewById( R.id.login_btn );
-        Button mapbtn = findViewById(R.id.mapbtn);
 
         createUserBtn.setOnClickListener( new View.OnClickListener() {
 
@@ -45,13 +44,6 @@ public class StartActivity extends AppCompatActivity {
             }
 
         } );
-
-        mapbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toMap();
-            }
-        });
     }
 
     private void toCreateUserPage() {
