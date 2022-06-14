@@ -1,9 +1,7 @@
 package xyz.discobiscuit.hoplyfork;
 
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -14,11 +12,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.List;
-
-import xyz.discobiscuit.hoplyfork.database.HoplyDB;
-import xyz.discobiscuit.hoplyfork.database.HoplyRepository;
-import xyz.discobiscuit.hoplyfork.database.Post;
 import xyz.discobiscuit.hoplyfork.databinding.ActivityMapsBinding;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -48,18 +41,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        int currentPostId = getIntent().getIntExtra( "post-id", Integer.MAX_VALUE );
+
+        Log.d( "current-post-id", currentPostId + "" );
+
         // Add a marker in Sydney and move the camera
-        //HoplyRepository.getInstance(getApplicationContext()).
-        //        getAllPosts().get().getValue().get(0);
-
-        getIntent().getIntExtra("post_id", 10);
-
-        //Log.d("Bastian", post.userId);
-
         LatLng sydney = new LatLng(getIntent().getDoubleExtra("lat", 10), getIntent().getDoubleExtra("long", 1));
         mMap.addMarker(new MarkerOptions().position(sydney).title("Post was made here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
