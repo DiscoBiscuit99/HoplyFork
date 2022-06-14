@@ -1,6 +1,8 @@
 package xyz.discobiscuit.hoplyfork.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
@@ -35,6 +40,7 @@ public class PostsActivity extends AppCompatActivity {
     private String currentUserId;
     private String currentUserNickname;
 
+    private FusedLocationProviderClient locationProviderClient;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -77,6 +83,8 @@ public class PostsActivity extends AppCompatActivity {
 
         } );
 
+        locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
     }
 
     private void initPosts() {
@@ -108,12 +116,18 @@ public class PostsActivity extends AppCompatActivity {
 
                 postContentTextView.setText( "" );
 
-                HoplyRepository
-                        .getInstance( getApplicationContext() )
-                        .insertPosts( new Post( currentUserId, postContent) );
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED){
+                        HoplyRepository
+                                .getInstance( getApplicationContext() )
+                                .insertPosts( new Post( currentUserId, postContent) );
 
+                    }else {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                    }
+                }
             }
-
         } );
 
     }

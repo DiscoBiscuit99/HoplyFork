@@ -198,6 +198,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
         public void onClick(View view) {
             Intent intent = new Intent(context, MapsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            int id = getAdapterPosition();
+            intent.putExtra("post_id", id);
             intent.putExtra("lat", Math.random() * (40-10) + 10);
             intent.putExtra("long", Math.random() * (40-10) + 10);
             context.startActivity(intent);
