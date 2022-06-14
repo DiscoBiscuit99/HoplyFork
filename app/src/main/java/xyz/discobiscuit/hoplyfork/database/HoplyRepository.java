@@ -30,10 +30,10 @@ public class HoplyRepository {
 
         HoplyDB database = HoplyDB.getInstance( context );
 
-        this.executor = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
-        this.userDao = database.userDao();
-        this.postDao = database.postDao();
-        //this.reactionDao = database.reactionDao();
+        executor = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
+        userDao = database.userDao();
+        postDao = database.postDao();
+        reactionDao = database.reactionDao();
 
     }
 
@@ -84,6 +84,28 @@ public class HoplyRepository {
 
     public void insertPosts( Post... posts ) {
         new InsertPostsAsyncTask( postDao ).execute( posts );
+    }
+
+    @RequiresApi( api = Build.VERSION_CODES.N )
+    public Optional<Post> findPostById( int id ) {
+
+        Future<Post> postFuture =
+                executor.submit( () -> postDao.findById( id ) );
+
+        try {
+
+            Post post = postFuture.get();
+
+            if ( post == null )
+                return Optional.empty();
+            else
+                return Optional.of( post );
+
+        } catch ( ExecutionException | InterruptedException e ) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+
     }
 
     @RequiresApi( api = Build.VERSION_CODES.N )
