@@ -18,7 +18,7 @@ public interface ReactionDao {
     void delete( Reaction reaction );
 
     @Query( "SELECT * FROM reaction WHERE post_id LIKE :postId" )
-    LiveData<List<Reaction>> getReactionsByPostId( String postId );
+    LiveData<List<Reaction>> getReactionsByReactionId( String postId );
 
     @Query( "SELECT * FROM reaction WHERE user_id LIKE :userId" )
     LiveData<List<Reaction>> getReactionsByUserId( String userId );

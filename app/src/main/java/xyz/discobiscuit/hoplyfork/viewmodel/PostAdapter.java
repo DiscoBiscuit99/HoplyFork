@@ -25,8 +25,10 @@ import xyz.discobiscuit.hoplyfork.MapsActivity;
 import xyz.discobiscuit.hoplyfork.R;
 import xyz.discobiscuit.hoplyfork.activities.PostsActivity;
 import xyz.discobiscuit.hoplyfork.activities.StartActivity;
+import xyz.discobiscuit.hoplyfork.database.HoplyDB;
 import xyz.discobiscuit.hoplyfork.database.HoplyRepository;
 import xyz.discobiscuit.hoplyfork.database.Post;
+import xyz.discobiscuit.hoplyfork.database.PostDao;
 import xyz.discobiscuit.hoplyfork.database.Reaction;
 import xyz.discobiscuit.hoplyfork.database.User;
 
@@ -60,34 +62,47 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
         Post currentPost = posts.get( position );
 
-        LiveData<List<Reaction>> likes;
-        LiveData<List<Reaction>> dislikes;
+        //LiveData<List<Reaction>> likes = repository.getAllLikes().get();
+        //LiveData<List<Reaction>> dislikes = repository.getAllDislikes().get();
 
-        if ( repository.getAllLikes().isPresent() )
-            likes = repository.getAllLikes().get();
-        else
-            likes = new MutableLiveData<>();
+        //int likeCount = likes.size();
+        //int dislikeCount = dislikes.size();
 
-        if ( repository.getAllDislikes().isPresent() )
-            dislikes = repository.getAllDislikes().get();
-        else
-            dislikes = new MutableLiveData<>();
+        //if ( repository.getAllLikes().isPresent() )
+        //    likes = repository.getAllLikes().get();
+        //else
+        //    likes = new MutableLiveData<>();
 
-        int likeCount = 0;
+        //if ( repository.getAllDislikes().isPresent() )
+        //    dislikes = repository.getAllDislikes().get();
+        //else
+        //    dislikes = new MutableLiveData<>();
 
-        if ( likes.getValue() != null )
-            likeCount = likes.getValue().size();
+        //int likeCount = 0;
 
-        int dislikeCount = 0;
+        //if ( likes != null )
+        //    likeCount = likes.getValue().size();
 
-        if ( dislikes.getValue() != null )
-            dislikeCount = dislikes.getValue().size();
+        //int dislikeCount = 0;
+
+        //if ( dislikes != null )
+        //    dislikeCount = dislikes.getValue().size();
 
         Optional<User> userOfPost = repository.findUserById( currentPost.userId );
 
         String nickname = "Unknown...";
         if ( userOfPost.isPresent() )
             nickname = userOfPost.get().name;
+
+        int likeCount = 0;
+        for ( Reaction reaction : reactions )
+            if ( reaction.type == 0 && reaction.postId == currentPost.id )
+                likeCount++;
+
+        int dislikeCount = 0;
+        for ( Reaction reaction : reactions )
+            if ( reaction.type == 1 && reaction.postId == currentPost.id )
+                dislikeCount++;
 
         holder.textViewNickname.setText( nickname );
         holder.textViewContent.setText( currentPost.content );
@@ -143,9 +158,35 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
             likeBtn.setOnClickListener( new View.OnClickListener() {
 
+                @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onClick(View v) {
-                    repository.insertReactions( new Reaction( "disco", 0, 0 ) );
+                    //Post currentPost = posts.get( getAdapterPosition() );
+
+                    Post currentPost = repository.findPostById( getAdapterPosition() + 1 ).get();
+
+                    Log.d( "adapter position", getAdapterPosition() + "" );
+                    Log.d( "current post id", currentPost.id + "" );
+                    Log.d( "current post user id", currentPost.userId );
+                    Log.d( "current post content", currentPost.content );
+
+                    repository.insertReactions( new Reaction( currentPost.userId, getAdapterPosition() + 1, 0 ) );
+                }
+
+            } );
+
+            dislikeBtn.setOnClickListener(new View.OnClickListener() {
+
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void onClick(View v) {
+                    Post currentPost = posts.get( getAdapterPosition() );
+
+                    Log.d( "current post id", currentPost.id + "" );
+                    Log.d( "current post user id", currentPost.userId );
+                    Log.d( "current post content", currentPost.content );
+
+                    repository.insertReactions( new Reaction( currentPost.userId, getAdapterPosition() + 1, 1 ) );
                 }
 
             } );
