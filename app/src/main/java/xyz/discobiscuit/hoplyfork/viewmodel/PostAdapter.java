@@ -3,6 +3,7 @@ package xyz.discobiscuit.hoplyfork.viewmodel;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,6 +157,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
         public void onClick(View view) {
             Intent intent = new Intent(context, MapsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            int id = getAdapterPosition();
+            intent.putExtra("post_id", id);
             intent.putExtra("lat", Math.random() * (40-10) + 10);
             intent.putExtra("long", Math.random() * (40-10) + 10);
             context.startActivity(intent);
