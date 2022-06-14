@@ -3,6 +3,7 @@ package xyz.discobiscuit.hoplyfork.database;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
@@ -30,10 +31,10 @@ public class HoplyRepository {
 
         HoplyDB database = HoplyDB.getInstance( context );
 
-        this.executor = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
-        this.userDao = database.userDao();
-        this.postDao = database.postDao();
-        //this.reactionDao = database.reactionDao();
+        executor = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
+        userDao = database.userDao();
+        postDao = database.postDao();
+        reactionDao = database.reactionDao();
 
     }
 
@@ -87,6 +88,29 @@ public class HoplyRepository {
     }
 
     @RequiresApi( api = Build.VERSION_CODES.N )
+    public Optional<Post> findPostById( int id ) {
+
+        Future<Post> postFuture = executor.submit( () -> postDao.findById( id ) );
+
+        try {
+
+            Post post = postFuture.get();
+
+            if ( post == null )
+                return Optional.empty();
+            else
+                return Optional.of( post );
+
+        } catch ( ExecutionException | InterruptedException e ) {
+
+            e.printStackTrace();
+            return Optional.empty();
+
+        }
+
+    }
+
+    @RequiresApi( api = Build.VERSION_CODES.N )
     public Optional<LiveData<List<Post>>> getAllPosts() {
 
         Future<LiveData<List<Post>>> postsFuture =
@@ -124,7 +148,7 @@ public class HoplyRepository {
 
             LiveData<List<Reaction>> reactions = reactionsFuture.get();
 
-            if ( reactions.getValue() == null ) {
+            if ( reactions == null ) {
                 return Optional.empty();
             } else
                 return Optional.of( reactions );
@@ -146,7 +170,7 @@ public class HoplyRepository {
 
             LiveData<List<Reaction>> reactions = likesFuture.get();
 
-            if ( reactions.getValue() == null ) {
+            if ( reactions == null ) {
                 return Optional.empty();
             } else
                 return Optional.of( reactions );
@@ -168,7 +192,7 @@ public class HoplyRepository {
 
             LiveData<List<Reaction>> reactions = dislikesFuture.get();
 
-            if ( reactions.getValue() == null ) {
+            if ( reactions == null ) {
                 return Optional.empty();
             } else
                 return Optional.of( reactions );

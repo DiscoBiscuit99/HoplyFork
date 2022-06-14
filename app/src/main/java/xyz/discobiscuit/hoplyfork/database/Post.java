@@ -1,5 +1,7 @@
 package xyz.discobiscuit.hoplyfork.database;
 
+import android.util.Log;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -13,11 +15,12 @@ import androidx.room.PrimaryKey;
 //        onDelete = ForeignKey.CASCADE
 //    )
 //} )
-@Entity   (foreignKeys = {@ForeignKey(entity = User.class,
-        parentColumns = "id",
-        childColumns = "user_id",
-        onDelete = ForeignKey.CASCADE)
-})
+//@Entity   (foreignKeys = {@ForeignKey(entity = User.class,
+//        parentColumns = "id",
+//        childColumns = "user_id",
+//        onDelete = ForeignKey.CASCADE)
+//})
+@Entity
 public class Post {
 
     @PrimaryKey( autoGenerate = true )

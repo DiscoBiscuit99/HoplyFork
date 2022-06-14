@@ -57,7 +57,6 @@ public class PostsActivity extends AppCompatActivity {
         postAdapter.context( getApplicationContext() );
         postsRecyclerView.setAdapter( postAdapter );
 
-
         postViewModel = new ViewModelProvider( this ).get( PostViewModel.class );
 
         postViewModel.getAllPosts().observe( this, new Observer<List<Post>>() {

@@ -18,10 +18,10 @@ import xyz.discobiscuit.hoplyfork.database.Reaction;
 
 public class PostViewModel extends AndroidViewModel {
 
-    private HoplyRepository repository;
+    private final HoplyRepository repository;
 
-    private LiveData<List<Post>> allPosts;
-    private LiveData<List<Reaction>> allReactions;
+    private final LiveData<List<Post>> allPosts;
+    private final LiveData<List<Reaction>> allReactions;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public PostViewModel(@NonNull Application app ) {
@@ -29,7 +29,7 @@ public class PostViewModel extends AndroidViewModel {
         super( app );
 
         repository = HoplyRepository
-                .getInstance( getApplication().getApplicationContext() );
+                .getInstance(getApplication().getApplicationContext());
 
         if ( repository.getAllPosts().isPresent() )
             allPosts = repository.getAllPosts().get();
@@ -44,11 +44,7 @@ public class PostViewModel extends AndroidViewModel {
     }
 
     public void insert( Post post ) {
-
-        HoplyRepository
-                .getInstance( getApplication().getApplicationContext() )
-                .insertPosts( post );
-
+        repository.insertPosts( post );
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
