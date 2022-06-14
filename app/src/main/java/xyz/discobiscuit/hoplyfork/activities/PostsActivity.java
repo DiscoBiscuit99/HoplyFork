@@ -1,5 +1,6 @@
 package xyz.discobiscuit.hoplyfork.activities;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import xyz.discobiscuit.hoplyfork.MapsActivity;
 import xyz.discobiscuit.hoplyfork.R;
 import xyz.discobiscuit.hoplyfork.database.HoplyRepository;
 import xyz.discobiscuit.hoplyfork.database.Post;
@@ -32,6 +34,7 @@ public class PostsActivity extends AppCompatActivity {
 
     private String currentUserId;
     private String currentUserNickname;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -53,6 +56,7 @@ public class PostsActivity extends AppCompatActivity {
         PostAdapter postAdapter = new PostAdapter();
         postAdapter.context( getApplicationContext() );
         postsRecyclerView.setAdapter( postAdapter );
+
 
         postViewModel = new ViewModelProvider( this ).get( PostViewModel.class );
 
@@ -115,4 +119,8 @@ public class PostsActivity extends AppCompatActivity {
 
     }
 
+    public void toMap(){
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        startActivity(intent);
+    }
 }

@@ -92,12 +92,12 @@
                 android:text="Dislike" />
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/location_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_margin="8dp"
-                android:text="Comment" />
+                android:layout_weight="1"
+                android:text="Location" />
 
         </LinearLayout>
 

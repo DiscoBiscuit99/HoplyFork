@@ -21,10 +21,6 @@ public class StartActivity extends AppCompatActivity {
         initBtns();
 
     }
-    private void toMap(){
-        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-        startActivity(intent);
-    }
 
     private void initBtns() {
 
@@ -70,6 +66,11 @@ public class StartActivity extends AppCompatActivity {
         Intent loginIntent = new Intent( getApplicationContext(), LoginActivity.class );
         startActivity( loginIntent );
 
+    }
+
+    public void toMap(){
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        startActivity(intent);
     }
 
 }

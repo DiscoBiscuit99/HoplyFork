@@ -33,7 +33,7 @@ public class HoplyRepository {
         this.executor = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
         this.userDao = database.userDao();
         this.postDao = database.postDao();
-        this.reactionDao = database.reactionDao();
+        //this.reactionDao = database.reactionDao();
 
     }
 

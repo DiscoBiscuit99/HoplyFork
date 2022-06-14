@@ -1,6 +1,7 @@
 package xyz.discobiscuit.hoplyfork.viewmodel;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import xyz.discobiscuit.hoplyfork.MapsActivity;
 import xyz.discobiscuit.hoplyfork.R;
+import xyz.discobiscuit.hoplyfork.activities.PostsActivity;
+import xyz.discobiscuit.hoplyfork.activities.StartActivity;
 import xyz.discobiscuit.hoplyfork.database.HoplyRepository;
 import xyz.discobiscuit.hoplyfork.database.Post;
 import xyz.discobiscuit.hoplyfork.database.Reaction;
@@ -29,13 +33,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
     private HoplyRepository repository;
 
+
     private List<Post> posts = new ArrayList<>();
     private List<Reaction> reactions = new ArrayList<>();
     private Context context;
 
     @NonNull
     @Override
-    public PostHolder onCreateViewHolder( @NonNull ViewGroup parent, int viewType ) {
+    public PostHolder onCreateViewHolder( @NonNull ViewGroup parent, int viewType) {
 
         repository = HoplyRepository.getInstance( context.getApplicationContext() );
 
@@ -95,6 +100,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
         return posts.size();
     }
 
+    public interface RecyclerViewClickListener{
+        void onClick( View view, int position);
+    }
+
     public void setPosts( List<Post> posts ) {
 
         this.posts = posts;
@@ -113,12 +122,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
         this.context = context;
     }
 
-    class PostHolder extends RecyclerView.ViewHolder {
+    class PostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView textViewNickname;
         private TextView textViewContent;
         private Button likeBtn;
         private Button dislikeBtn;
+        private Button locationBtn;
 
         public PostHolder( @NonNull View itemView ) {
 
@@ -128,6 +138,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
             textViewContent = itemView.findViewById( R.id.content_text_view );
             likeBtn = itemView.findViewById( R.id.like_btn );
             dislikeBtn = itemView.findViewById( R.id.dislike_btn );
+            locationBtn = itemView.findViewById( R.id.location_btn );
 
             likeBtn.setOnClickListener( new View.OnClickListener() {
 
@@ -138,8 +149,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
             } );
 
+            locationBtn.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(context, MapsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("lat", Math.random() * (40-10) + 10);
+            intent.putExtra("long", Math.random() * (40-10) + 10);
+            context.startActivity(intent);
+        }
     }
 
 }
