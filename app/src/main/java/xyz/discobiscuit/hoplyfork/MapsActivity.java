@@ -3,6 +3,7 @@ package xyz.discobiscuit.hoplyfork;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,6 +44,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        int currentPostId = getIntent().getIntExtra( "post-id", Integer.MAX_VALUE );
+
+        Log.d( "current-post-id", currentPostId + "" );
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(getIntent().getDoubleExtra("lat", 10), getIntent().getDoubleExtra("long", 1));
