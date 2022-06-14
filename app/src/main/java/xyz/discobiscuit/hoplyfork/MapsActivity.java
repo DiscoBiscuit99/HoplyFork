@@ -53,8 +53,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         // Add a marker in Sydney and move the camera
-        HoplyRepository.getInstance(getApplicationContext()).
-                getAllPosts().get().getValue().get(0);
+        //HoplyRepository.getInstance(getApplicationContext()).
+        //        getAllPosts().get().getValue().get(0);
 
         getIntent().getIntExtra("post_id", 10);
 
