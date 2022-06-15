@@ -17,13 +17,13 @@ public class User {
     public String name;
 
     @ColumnInfo( name = "stamp" )
-    public double stamp;
+    public String stamp;
 
-    public User( String id, String name ) {
+    public User( String id, String name, String stamp ) {
 
         this.id = id;
         this.name = name;
-        this.stamp = System.currentTimeMillis();
+        this.stamp = stamp;
 
     }
 

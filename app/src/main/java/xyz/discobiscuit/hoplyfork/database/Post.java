@@ -7,20 +7,12 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-//@Entity( foreignKeys = {
-//    @ForeignKey(
-//        entity = User.class,
-//        parentColumns = "id",
-//        childColumns = "user_id",
-//        onDelete = ForeignKey.CASCADE
-//    )
-//} )
-//@Entity   (foreignKeys = {@ForeignKey(entity = User.class,
-//        parentColumns = "id",
-//        childColumns = "user_id",
-//        onDelete = ForeignKey.CASCADE)
-//})
-@Entity
+@Entity(foreignKeys = @ForeignKey(
+    entity = User.class,
+    parentColumns = "id",
+    childColumns = "user_id",
+    onDelete = ForeignKey.CASCADE
+))
 public class Post {
 
     @PrimaryKey( autoGenerate = true )
@@ -33,13 +25,13 @@ public class Post {
     public String content;
 
     @ColumnInfo( name = "stamp" )
-    public double stamp;
+    public String stamp;
 
-    public Post( String userId, String content ) {
+    public Post( String userId, String content, String stamp ) {
 
         this.userId = userId;
         this.content = content;
-        this.stamp = System.currentTimeMillis();
+        this.stamp = stamp;
 
     }
 

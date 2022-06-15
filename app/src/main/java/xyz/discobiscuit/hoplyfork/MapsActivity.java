@@ -58,4 +58,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(mark).title("Post was made here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(mark));
     }
+
 }

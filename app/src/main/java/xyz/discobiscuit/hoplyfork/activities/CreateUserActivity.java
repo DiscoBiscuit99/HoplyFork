@@ -72,7 +72,7 @@ public class CreateUserActivity extends AppCompatActivity {
                 .getText()
                 .toString();
 
-        User newUser = new User( userId, name );
+        User newUser = new User( userId, name, "time" );
 
         Optional<User> existingUser =
                     HoplyRepository

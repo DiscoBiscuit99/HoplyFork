@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 @Dao
 public interface ReactionDao {
 
-    @Insert
+    @Insert( onConflict = OnConflictStrategy.REPLACE )
     void insert( Reaction reaction );
 
     @Delete
@@ -26,10 +27,10 @@ public interface ReactionDao {
     @Query( "SELECT * FROM reaction" )
     LiveData<List<Reaction>> getAll();
 
-    @Query( "SELECT * FROM reaction WHERE type LIKE 0" )
+    @Query( "SELECT * FROM reaction WHERE type LIKE 1" )
     LiveData<List<Reaction>> getAllLikes();
 
-    @Query( "SELECT * FROM reaction WHERE type LIKE 1" )
+    @Query( "SELECT * FROM reaction WHERE type LIKE 2" )
     LiveData<List<Reaction>> getAllDislikes();
 
     @Query( "DELETE FROM reaction" )

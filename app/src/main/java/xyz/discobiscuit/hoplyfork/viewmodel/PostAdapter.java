@@ -161,16 +161,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onClick(View v) {
-                    //Post currentPost = posts.get( getAdapterPosition() );
-
-                    Post currentPost = repository.findPostById( getAdapterPosition() + 1 ).get();
-
-                    Log.d( "adapter position", getAdapterPosition() + "" );
-                    Log.d( "current post id", currentPost.id + "" );
-                    Log.d( "current post user id", currentPost.userId );
-                    Log.d( "current post content", currentPost.content );
-
-                    repository.insertReactions( new Reaction( currentPost.userId, getAdapterPosition() + 1, 0 ) );
+                    Post currentPost = posts.get( getAdapterPosition() );
+                    repository.insertReactions( Reaction.newLike( currentPost.userId, currentPost.id ) );
                 }
 
             } );
@@ -181,12 +173,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
                 @Override
                 public void onClick(View v) {
                     Post currentPost = posts.get( getAdapterPosition() );
-
-                    Log.d( "current post id", currentPost.id + "" );
-                    Log.d( "current post user id", currentPost.userId );
-                    Log.d( "current post content", currentPost.content );
-
-                    repository.insertReactions( new Reaction( currentPost.userId, getAdapterPosition() + 1, 1 ) );
+                    repository.insertReactions( Reaction.newDislike( currentPost.userId, currentPost.id ) );
                 }
 
             } );
