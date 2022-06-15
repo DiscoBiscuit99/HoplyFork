@@ -62,33 +62,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
         Post currentPost = posts.get( position );
 
-        //LiveData<List<Reaction>> likes = repository.getAllLikes().get();
-        //LiveData<List<Reaction>> dislikes = repository.getAllDislikes().get();
-
-        //int likeCount = likes.size();
-        //int dislikeCount = dislikes.size();
-
-        //if ( repository.getAllLikes().isPresent() )
-        //    likes = repository.getAllLikes().get();
-        //else
-        //    likes = new MutableLiveData<>();
-
-        //if ( repository.getAllDislikes().isPresent() )
-        //    dislikes = repository.getAllDislikes().get();
-        //else
-        //    dislikes = new MutableLiveData<>();
-
-        //int likeCount = 0;
-
-        //if ( likes != null )
-        //    likeCount = likes.getValue().size();
-
-        //int dislikeCount = 0;
-
-        //if ( dislikes != null )
-        //    dislikeCount = dislikes.getValue().size();
-
-        Optional<User> userOfPost = repository.findUserById( currentPost.userId );
+        Optional<User> userOfPost = repository.findUserById( currentPost.user_id );
 
         String nickname = "Unknown...";
         if ( userOfPost.isPresent() )
@@ -96,12 +70,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
         int likeCount = 0;
         for ( Reaction reaction : reactions )
-            if ( reaction.type == 0 && reaction.postId == currentPost.id )
+            if ( reaction.type == 1 && reaction.post_id == currentPost.id )
                 likeCount++;
 
         int dislikeCount = 0;
         for ( Reaction reaction : reactions )
-            if ( reaction.type == 1 && reaction.postId == currentPost.id )
+            if ( reaction.type == 2 && reaction.post_id == currentPost.id )
                 dislikeCount++;
 
         holder.textViewNickname.setText( nickname );
@@ -162,7 +136,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
                 @Override
                 public void onClick(View v) {
                     Post currentPost = posts.get( getAdapterPosition() );
-                    repository.insertReactions( Reaction.newLike( currentPost.userId, currentPost.id ) );
+                    repository.insertReactions( Reaction.newLike( currentPost.user_id, currentPost.id ) );
                 }
 
             } );
@@ -173,7 +147,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
                 @Override
                 public void onClick(View v) {
                     Post currentPost = posts.get( getAdapterPosition() );
-                    repository.insertReactions( Reaction.newDislike( currentPost.userId, currentPost.id ) );
+                    repository.insertReactions( Reaction.newDislike( currentPost.user_id, currentPost.id ) );
                 }
 
             } );

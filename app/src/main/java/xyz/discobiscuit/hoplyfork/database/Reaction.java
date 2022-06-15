@@ -27,11 +27,11 @@ public class Reaction {
 
     @NonNull
     @ColumnInfo( name = "user_id", index = true )
-    public String userId;
+    public String user_id;
 
     @NonNull
     @ColumnInfo( name = "post_id", index = true )
-    public int postId;
+    public int post_id;
 
     @ColumnInfo( name = "type" )
     public int type;
@@ -40,10 +40,10 @@ public class Reaction {
     @ColumnInfo( name = "stamp" )
     public String stamp;
 
-    public Reaction( String userId, int postId, int type, String stamp ) {
+    public Reaction( String user_id, int post_id, int type, String stamp ) {
 
-        this.userId = userId;
-        this.postId = postId;
+        this.user_id = user_id;
+        this.post_id = post_id;
         this.type = type;
         this.stamp = stamp;
 

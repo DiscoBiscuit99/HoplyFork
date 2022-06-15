@@ -19,7 +19,7 @@ public class Post {
     public int id;
 
     @ColumnInfo( name = "user_id", index = true )
-    public String userId;
+    public String user_id;
 
     @ColumnInfo( name = "content" )
     public String content;
@@ -27,9 +27,9 @@ public class Post {
     @ColumnInfo( name = "stamp" )
     public String stamp;
 
-    public Post( String userId, String content, String stamp ) {
+    public Post( String user_id, String content, String stamp ) {
 
-        this.userId = userId;
+        this.user_id = user_id;
         this.content = content;
         this.stamp = stamp;
 

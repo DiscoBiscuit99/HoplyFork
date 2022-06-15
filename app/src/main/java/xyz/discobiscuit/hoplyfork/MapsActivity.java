@@ -54,9 +54,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MapLocationEntity mapLocationEntity = HoplyRepository.getInstance(getApplicationContext()).findLocationById(currentPostId);
 
         // Add a marker in Sydney and move the camera
-        LatLng mark = new LatLng(mapLocationEntity.lang, mapLocationEntity.longi);
-        mMap.addMarker(new MarkerOptions().position(mark).title("Post was made here"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(mark));
+        if ( mapLocationEntity != null ) {
+            LatLng mark = new LatLng(mapLocationEntity.lang, mapLocationEntity.longi);
+            mMap.addMarker(new MarkerOptions().position(mark).title("Post was made here"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(mark));
+        }
     }
 
 }

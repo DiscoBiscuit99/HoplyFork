@@ -9,7 +9,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database( version = 10, entities = { User.class, Post.class, Reaction.class, MapLocationEntity.class }, exportSchema = false )
+@Database( version = 13, entities = { User.class, Post.class, Reaction.class, MapLocationEntity.class }, exportSchema = false )
 public abstract class HoplyDB extends RoomDatabase {
 
     public abstract UserDao userDao();
@@ -77,13 +77,12 @@ public abstract class HoplyDB extends RoomDatabase {
         @Override
         protected Void doInBackground( Void... voids ) {
 
-            userDao.insert( new User( "test", "TestUser" ) );
+            userDao.insert( new User( "test", "TestUser", "time" ) );
 
-            postDao.insert( new Post( "test", "Content 1" ) );
-            postDao.insert( new Post( "test", "Content 2" ) );
-            postDao.insert( new Post( "test", "Content 3" ) );
+            postDao.insert( new Post( "test", "Content 1", "time" ) );
+            postDao.insert( new Post( "test", "Content 2", "time" ) );
+            postDao.insert( new Post( "test", "Content 3", "time" ) );
 
-            reactionDao.insert( new Reaction( "disco", 0, 0 ) );
             return null;
 
         }

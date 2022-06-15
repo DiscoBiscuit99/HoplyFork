@@ -41,7 +41,6 @@ public class StartActivity extends AppCompatActivity {
         String baseUrl = "https://caracal.imada.sdu.dk/app2022/";
         String usersUrl = baseUrl + "users";
         String postsUrl = baseUrl + "posts";
-        String reactionsUrl = baseUrl + "reactions";
 
         RequestQueue requestQueue = Volley.newRequestQueue( getApplicationContext() );
 
@@ -75,25 +74,8 @@ public class StartActivity extends AppCompatActivity {
                 error -> Log.d("posts-error", error.toString() )
         );
 
-        JsonArrayRequest reactionsRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                reactionsUrl,
-                null,
-                response -> {
-                    Log.d("reactions-response", response.toString() );
-                    Gson gson = new GsonBuilder().serializeNulls().create();
-                    Type reactionCollectionType = new TypeToken<Collection<Reaction>>(){}.getType();
-                    List<Reaction> reactions = gson.fromJson(response.toString(), reactionCollectionType );
-                    for ( Reaction reaction : reactions )
-                        if ( reaction.userId != null )
-                            repository.insertReactions( reaction );
-                },
-                error -> Log.d("reactions-error", error.toString() )
-        );
-
         requestQueue.add( usersRequest );
         requestQueue.add( postsRequest );
-        requestQueue.add( reactionsRequest );
 
         initBtns();
 
