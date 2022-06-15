@@ -3,14 +3,10 @@ package xyz.discobiscuit.hoplyfork.database;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -24,6 +20,7 @@ public class HoplyRepository {
     private static UserDao userDao;
     private static PostDao postDao;
     private static ReactionDao reactionDao;
+    private static MapLocationDao mapLocationDao;
 
     private static volatile HoplyRepository INSTANCE;
 
@@ -35,7 +32,7 @@ public class HoplyRepository {
         userDao = database.userDao();
         postDao = database.postDao();
         reactionDao = database.reactionDao();
-
+        mapLocationDao = database.locationDao();
     }
 
     // Singleton Structure:
@@ -85,6 +82,10 @@ public class HoplyRepository {
 
     public void insertPosts( Post... posts ) {
         new InsertPostsAsyncTask( postDao ).execute( posts );
+    }
+
+    public long insertPostsReturnId(Post... posts ) throws ExecutionException, InterruptedException {
+       return new InsertPostsReturnIdAsyncTask( postDao ).execute( posts ).get();
     }
 
     @RequiresApi( api = Build.VERSION_CODES.N )
@@ -208,6 +209,21 @@ public class HoplyRepository {
         new InsertReactionsAsyncTask( reactionDao ).execute( reactions );
     }
 
+    /// Location METHODS///
+    public MapLocationEntity findLocationById(int post_id ) {
+
+        Future<MapLocationEntity> locationFuture = executor.submit(() -> mapLocationDao.findById( post_id));
+        try {
+            return locationFuture.get();
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    public void insertLocation(MapLocationEntity mapLocationEntity){ new InsertLocationAsyncTask(mapLocationDao).execute(mapLocationEntity);
+    }
+
+
     /// ASYNC TASKS ///
 
     private static class InsertUserAsyncTask extends AsyncTask<User, Void, Void> {
@@ -243,6 +259,23 @@ public class HoplyRepository {
                 postDao.insert( post );
 
             return null;
+
+        }
+
+    }
+
+    private static class InsertPostsReturnIdAsyncTask extends AsyncTask<Post, Void, Long> {
+
+        private PostDao postDao;
+
+        private InsertPostsReturnIdAsyncTask( PostDao postDao ) {
+            this.postDao = postDao;
+        }
+
+        @Override
+        protected Long doInBackground(Post... posts ) {
+
+            return postDao.insertReturnId(posts [0] );
 
         }
 
@@ -284,6 +317,20 @@ public class HoplyRepository {
 
         }
 
+    }
+
+    private static class InsertLocationAsyncTask extends AsyncTask<MapLocationEntity, Void, Void>{
+
+        private MapLocationDao mapLocationDao;
+
+        private InsertLocationAsyncTask( MapLocationDao mapLocationDao){ this.mapLocationDao = mapLocationDao; }
+
+        @Override
+        protected Void doInBackground(MapLocationEntity... mapLocationEntities) {
+
+            mapLocationDao.insert(mapLocationEntities[ 0 ]);
+            return null;
+        }
     }
 
 }

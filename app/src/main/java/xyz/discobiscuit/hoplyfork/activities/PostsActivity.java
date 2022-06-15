@@ -3,12 +3,12 @@ package xyz.discobiscuit.hoplyfork.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -20,12 +20,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import xyz.discobiscuit.hoplyfork.MapsActivity;
 import xyz.discobiscuit.hoplyfork.R;
 import xyz.discobiscuit.hoplyfork.database.HoplyRepository;
+import xyz.discobiscuit.hoplyfork.database.MapLocationEntity;
 import xyz.discobiscuit.hoplyfork.database.Post;
 import xyz.discobiscuit.hoplyfork.database.Reaction;
 import xyz.discobiscuit.hoplyfork.viewmodel.PostAdapter;
@@ -116,12 +119,33 @@ public class PostsActivity extends AppCompatActivity {
 
                 postContentTextView.setText( "" );
 
+                // Creates the post and gets user location.
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED){
-                        HoplyRepository
-                                .getInstance( getApplicationContext() )
-                                .insertPosts( new Post( currentUserId, postContent) );
+                        Post newPost = new Post(currentUserId, postContent);
+
+                        try {
+                            int post_id = 0;
+                            post_id = (int) HoplyRepository
+                                    .getInstance( getApplicationContext() )
+                                    .insertPostsReturnId(newPost);
+
+
+                            int finalPost_id = post_id;
+                            locationProviderClient.getLastLocation()
+                                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+
+                                        @Override
+                                        public void onSuccess(Location location) {
+                                            HoplyRepository.getInstance(getApplicationContext())
+                                                    .insertLocation(new MapLocationEntity(finalPost_id, location.getLatitude(),location.getLongitude()));
+                                            Log.d("Location", location.getLatitude() + " " + location.getLongitude() );
+                                        }
+                                    });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
                     }else {
                         requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
@@ -130,10 +154,5 @@ public class PostsActivity extends AppCompatActivity {
             }
         } );
 
-    }
-
-    public void toMap(){
-        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-        startActivity(intent);
     }
 }

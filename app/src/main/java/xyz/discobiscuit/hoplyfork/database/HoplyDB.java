@@ -9,12 +9,13 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database( version = 8, entities = { User.class, Post.class, Reaction.class }, exportSchema = false )
+@Database( version = 10, entities = { User.class, Post.class, Reaction.class, MapLocationEntity.class }, exportSchema = false )
 public abstract class HoplyDB extends RoomDatabase {
 
     public abstract UserDao userDao();
     public abstract PostDao postDao();
     public abstract ReactionDao reactionDao();
+    public abstract MapLocationDao locationDao();
 
     private static volatile HoplyDB INSTANCE;
 
@@ -64,11 +65,13 @@ public abstract class HoplyDB extends RoomDatabase {
         private UserDao userDao;
         private PostDao postDao;
         private ReactionDao reactionDao;
+        private MapLocationDao mapLocationDao;
 
         private PopulateDbAsyncTask( HoplyDB database ) {
             userDao = database.userDao();
             postDao = database.postDao();
             reactionDao = database.reactionDao();
+            mapLocationDao = database.locationDao();
         }
 
         @Override
@@ -76,12 +79,11 @@ public abstract class HoplyDB extends RoomDatabase {
 
             userDao.insert( new User( "test", "TestUser" ) );
 
-            postDao.insert( new Post( "disco", "Content 1" ) );
-            postDao.insert( new Post( "disco", "Content 2" ) );
-            postDao.insert( new Post( "disco", "Content 3" ) );
+            postDao.insert( new Post( "test", "Content 1" ) );
+            postDao.insert( new Post( "test", "Content 2" ) );
+            postDao.insert( new Post( "test", "Content 3" ) );
 
             reactionDao.insert( new Reaction( "disco", 0, 0 ) );
-
             return null;
 
         }

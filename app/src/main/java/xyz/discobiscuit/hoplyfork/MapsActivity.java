@@ -12,6 +12,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import xyz.discobiscuit.hoplyfork.database.HoplyRepository;
+import xyz.discobiscuit.hoplyfork.database.MapLocationEntity;
 import xyz.discobiscuit.hoplyfork.databinding.ActivityMapsBinding;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -49,9 +51,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Log.d( "current-post-id", currentPostId + "" );
 
+        MapLocationEntity mapLocationEntity = HoplyRepository.getInstance(getApplicationContext()).findLocationById(currentPostId);
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(getIntent().getDoubleExtra("lat", 10), getIntent().getDoubleExtra("long", 1));
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Post was made here"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng mark = new LatLng(mapLocationEntity.lang, mapLocationEntity.longi);
+        mMap.addMarker(new MarkerOptions().position(mark).title("Post was made here"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(mark));
     }
 }

@@ -14,6 +14,9 @@ public interface PostDao {
     @Insert
     void insert( Post post );
 
+    @Insert
+    long insertReturnId( Post post );
+
     @Delete
     void delete( Post post );
 
