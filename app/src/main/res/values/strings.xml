@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HoplyFork</string>
+    <string name="app_name">Hoply</string>
     <string name="welcome_text">Welcome to Hoply</string>
     <string name="login_text">Already have a user?</string>
     <string name="create_user_btn_text">Create user</string>

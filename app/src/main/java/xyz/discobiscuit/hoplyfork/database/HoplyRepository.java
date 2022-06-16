@@ -16,14 +16,19 @@ import java.util.concurrent.Future;
 
 public class HoplyRepository {
 
+    // The executor service.
     private static ExecutorService executor;
+
+    // The DAOs.
     private static UserDao userDao;
     private static PostDao postDao;
     private static ReactionDao reactionDao;
     private static MapLocationDao mapLocationDao;
 
+    // The repository.
     private static volatile HoplyRepository INSTANCE;
 
+    // Returns a new instance of the repository.
     private HoplyRepository(Context context ) {
 
         HoplyDB database = HoplyDB.getInstance( context );
@@ -35,7 +40,7 @@ public class HoplyRepository {
         mapLocationDao = database.locationDao();
     }
 
-    // Singleton Structure:
+    // Singleton Structure (as the database):
     public static HoplyRepository getInstance( Context context ) {
 
         if ( INSTANCE == null )
@@ -52,10 +57,12 @@ public class HoplyRepository {
 
     /// USER RELATED METHODS ///
 
+    // Inserts a new user into the local database using an async task (defined below).
     public void insertUser( User user ) {
         new InsertUserAsyncTask( userDao ).execute( user );
     }
 
+    // Returns an optional of the desired user from the local database.
     @RequiresApi( api = Build.VERSION_CODES.N )
     public Optional<User> findUserById( String id ) {
 
@@ -80,14 +87,17 @@ public class HoplyRepository {
 
     /// POST RELATED METHODS ///
 
+    // Insert a new post into the local database using an async task (defined below).
     public void insertPosts( Post... posts ) {
         new InsertPostsAsyncTask( postDao ).execute( posts );
     }
 
+    // Insert a new post into the local database and return the id using an async task (defined below).
     public long insertPostsReturnId(Post... posts ) throws ExecutionException, InterruptedException {
        return new InsertPostsReturnIdAsyncTask( postDao ).execute( posts ).get();
     }
 
+    // Returns an optional of the desired post from the local database.
     @RequiresApi( api = Build.VERSION_CODES.N )
     public Optional<Post> findPostById( int id ) {
 
@@ -111,6 +121,7 @@ public class HoplyRepository {
 
     }
 
+    // Returns an optional of all posts in the local database.
     @RequiresApi( api = Build.VERSION_CODES.N )
     public Optional<LiveData<List<Post>>> getAllPosts() {
 
@@ -133,12 +144,14 @@ public class HoplyRepository {
 
     }
 
+    // Deletes all posts in the local database.
     public void deleteAllPosts() {
         new DeleteAllPostsAsyncTask( postDao ).execute();
     }
 
     /// REACTION RELATED METHODS ///
 
+    // Returns an optional of all reactions in the local database.
     @RequiresApi( api = Build.VERSION_CODES.N )
     public Optional<LiveData<List<Reaction>>> getAllReactions() {
 
@@ -161,6 +174,7 @@ public class HoplyRepository {
 
     }
 
+    // Returns an optional of all the likes (reaction.type == 1) in the local database.
     @RequiresApi( api = Build.VERSION_CODES.N )
     public Optional<LiveData<List<Reaction>>> getAllLikes() {
 
@@ -183,6 +197,7 @@ public class HoplyRepository {
 
     }
 
+    // Returns an optional of all the dislikes (reaction.type == 1) in the local database.
     @RequiresApi( api = Build.VERSION_CODES.N )
     public Optional<LiveData<List<Reaction>>> getAllDislikes() {
 
@@ -205,11 +220,14 @@ public class HoplyRepository {
 
     }
 
+    // Inserts reactions into the local database.
     public void insertReactions( Reaction... reactions ) {
         new InsertReactionsAsyncTask( reactionDao ).execute( reactions );
     }
 
-    /// Location METHODS///
+    /// LOCATION RELATED METHODS ///
+
+    // Returns a map location from the given post id from the local database.
     public MapLocationEntity findLocationById(int post_id ) {
 
         Future<MapLocationEntity> locationFuture = executor.submit(() -> mapLocationDao.findById( post_id));
@@ -218,13 +236,19 @@ public class HoplyRepository {
         } catch (Exception e){
             return null;
         }
+
     }
 
-    public void insertLocation(MapLocationEntity mapLocationEntity){ new InsertLocationAsyncTask(mapLocationDao).execute(mapLocationEntity);
+    // Inserts the given location into the local database.
+    public void insertLocation(MapLocationEntity mapLocationEntity) {
+        new InsertLocationAsyncTask(mapLocationDao).execute(mapLocationEntity);
     }
 
 
     /// ASYNC TASKS ///
+
+    // Each asynchronous task simply implements a `doInBackground` method
+    // that... runs in the background on another thread.
 
     private static class InsertUserAsyncTask extends AsyncTask<User, Void, Void> {
 

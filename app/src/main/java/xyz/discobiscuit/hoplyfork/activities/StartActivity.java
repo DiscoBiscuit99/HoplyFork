@@ -36,14 +36,17 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_start );
 
+        // Set the reference to the repository.
         HoplyRepository repository = HoplyRepository.getInstance( getApplicationContext() );
 
+        // Set the URLs for the remote database.
         String baseUrl = "https://caracal.imada.sdu.dk/app2022/";
         String usersUrl = baseUrl + "users";
         String postsUrl = baseUrl + "posts";
 
         RequestQueue requestQueue = Volley.newRequestQueue( getApplicationContext() );
 
+        // The user request.
         JsonArrayRequest usersRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 usersUrl,
@@ -59,6 +62,7 @@ public class StartActivity extends AppCompatActivity {
                 error -> Log.d( "users-error", error.toString() )
         );
 
+        // The post request.
         JsonArrayRequest postsRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 postsUrl,
@@ -74,6 +78,7 @@ public class StartActivity extends AppCompatActivity {
                 error -> Log.d("posts-error", error.toString() )
         );
 
+        // Add the requests to the request queue.
         requestQueue.add( usersRequest );
         requestQueue.add( postsRequest );
 
@@ -81,6 +86,7 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
+    // Initialize the buttons of the page.
     private void initBtns() {
 
         Button createUserBtn = findViewById( R.id.create_user_btn );
@@ -91,6 +97,7 @@ public class StartActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(v -> toLoginPage());
     }
 
+    // Go to the create users page.
     private void toCreateUserPage() {
 
         Intent createUserIntent = new Intent( getApplicationContext(), CreateUserActivity.class );
@@ -98,6 +105,7 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
+    // Go the login page.
     private void toLoginPage() {
 
         Intent loginIntent = new Intent( getApplicationContext(), LoginActivity.class );
@@ -105,6 +113,7 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
+    // Open the map view.
     public void toMap(){
         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
         startActivity(intent);

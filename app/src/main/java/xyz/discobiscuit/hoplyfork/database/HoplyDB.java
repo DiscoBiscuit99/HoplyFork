@@ -12,11 +12,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 @Database( version = 13, entities = { User.class, Post.class, Reaction.class, MapLocationEntity.class }, exportSchema = false )
 public abstract class HoplyDB extends RoomDatabase {
 
+    // The DAOs.
     public abstract UserDao userDao();
     public abstract PostDao postDao();
     public abstract ReactionDao reactionDao();
     public abstract MapLocationDao locationDao();
 
+    // The database instance.
     private static volatile HoplyDB INSTANCE;
 
     /*
@@ -47,6 +49,8 @@ public abstract class HoplyDB extends RoomDatabase {
 
     }
 
+    // A callback for debug reasons.
+    // When building the database, execute the PopulateDB asynchronous task.
     private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
 
         @Override
@@ -59,6 +63,7 @@ public abstract class HoplyDB extends RoomDatabase {
 
     };
 
+    // Prepopulate the database for debug reasons.
     private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Void> {
 
         private UserDao userDao;

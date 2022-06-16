@@ -3,7 +3,6 @@ package xyz.discobiscuit.hoplyfork.database;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-import androidx.room.OnConflictStrategy;
 import androidx.room.PrimaryKey;
 
 @Entity (foreignKeys = {@ForeignKey(entity = Post.class,

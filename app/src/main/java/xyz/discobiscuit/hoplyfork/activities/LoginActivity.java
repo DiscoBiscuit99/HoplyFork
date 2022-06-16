@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    // Initialize the buttons on the page.
     private void initBtns() {
 
         Button loginBtn = findViewById( R.id.login_btn_login );
@@ -51,6 +52,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    // Login and go to the posts feed.
+    // If the given user doesn't exist, go to the create user page instead.
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void login( String userId ) {
 
@@ -58,16 +61,21 @@ public class LoginActivity extends AppCompatActivity {
                 .getInstance( getApplicationContext() )
                 .findUserById( userId );
 
+        // If the user is present, go to the feed.
         if ( currentUser.isPresent() ) {
 
             String nickname = currentUser.get().name;
 
             Intent postsIntent = new Intent( getApplicationContext(), PostsActivity.class );
+
+            // Send the user id and nickname with the intent.
             postsIntent.putExtra( "user-id", userId );
             postsIntent.putExtra( "nickname", nickname );
+
             startActivity( postsIntent );
             finish();
 
+        // Otherwise, go to the create user page.
         } else {
 
             Intent createUserIntent = new Intent( getApplicationContext(), CreateUserActivity.class );

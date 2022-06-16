@@ -31,6 +31,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
     }
 
+    // Initialize the buttons on the page.
     private void initBtns() {
 
         createUserBtn = findViewById( R.id.create_user_btn_create_user );
@@ -57,6 +58,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
     }
 
+    // Create a user if not already present in the local database and go to the login page.
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void createUser() {
 
@@ -79,15 +81,18 @@ public class CreateUserActivity extends AppCompatActivity {
                         .getInstance( getApplicationContext() )
                         .findUserById( newUser.id );
 
+        // Insert the given user if not already present in the local database.
         if ( !existingUser.isPresent() )
             HoplyRepository
                 .getInstance( getApplicationContext() )
                 .insertUser( newUser );
 
+        // Then go to login page.
         toLoginPage();
 
     }
 
+    // Go to the login page.
     private void toLoginPage() {
 
         Intent loginIntent = new Intent( getApplicationContext(), LoginActivity.class );

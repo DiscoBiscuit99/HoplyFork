@@ -61,14 +61,17 @@ public class PostsActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_posts );
 
+        // Get the user id and nickname from the intent.
         currentUserId = getIntent().getStringExtra( "user-id" );
         currentUserNickname = getIntent().getStringExtra( "nickname" );
 
+        // URLs for the remote database.
         String baseUrl = "https://caracal.imada.sdu.dk/app2022/";
         String reactionsUrl = baseUrl + "reactions";
 
         RequestQueue requestQueue = Volley.newRequestQueue( getApplicationContext() );
 
+        // The request object for the reactions.
         JsonArrayRequest reactionsRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 reactionsUrl,
@@ -86,104 +89,81 @@ public class PostsActivity extends AppCompatActivity {
 
         requestQueue.add( reactionsRequest );
 
-        initPosts();
         initBtns();
 
+        // Set up the recycler view.
         RecyclerView postsRecyclerView = findViewById( R.id.feed );
         postsRecyclerView.setLayoutManager( new LinearLayoutManager( this ) );
         postsRecyclerView.setHasFixedSize( true );
 
+        // Connect the adapter to the recycler view.
         PostAdapter postAdapter = new PostAdapter();
         postAdapter.context( getApplicationContext() );
         postsRecyclerView.setAdapter( postAdapter );
 
+        // Set up the post view model provider.
         postViewModel = new ViewModelProvider( this ).get( PostViewModel.class );
 
-        postViewModel.getAllPosts().observe( this, new Observer<List<Post>>() {
+        // Set observers for changes in the post view model.
+        postViewModel.getAllPosts().observe( this, postAdapter::setPosts);
+        postViewModel.getAllReactions().observe( this, postAdapter::setReactions);
 
-            @Override
-            public void onChanged( List<Post> posts ) {
-                postAdapter.setPosts( posts );
-            }
-
-        } );
-
-        postViewModel.getAllReactions().observe( this, new Observer<List<Reaction>>() {
-
-            @Override
-            public void onChanged( List<Reaction> reactions ) {
-                postAdapter.setReactions( reactions );
-            }
-
-        } );
-
+        // Set location provider client.
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
     }
 
-    private void initPosts() {
-
-//        HoplyRepository
-//                .getInstance( getApplicationContext() )
-//                .deleteAllPosts();
-
-//        HoplyRepository
-//                .getInstance( getApplicationContext() )
-//                .insertPosts( new Post( "disco", "Content asdkladm lakdm al" ),
-//                        new Post( "disco", "Content kaldm lakmda lkdma d" ) );
-
-    }
-
+    // Initialize the buttons of the page.
     private void initBtns() {
 
         newPostBtn = findViewById( R.id.new_post_btn );
-        newPostBtn.setOnClickListener( new View.OnClickListener() {
 
-            @Override
-            public void onClick( View v ) {
-                TextView postContentTextView = findViewById( R.id.post_content_text );
+        // The new post button should insert both the post and a map location into the local database.
+        newPostBtn.setOnClickListener(v -> {
 
-                String postContent =
-                        postContentTextView
-                                .getText()
-                                .toString();
+            TextView postContentTextView = findViewById( R.id.post_content_text );
 
-                postContentTextView.setText( "" );
+            String postContent =
+                    postContentTextView
+                            .getText()
+                            .toString();
 
-                // Creates the post and gets user location.
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED){
-                        Post newPost = new Post(currentUserId, postContent, "time");
+            postContentTextView.setText( "" );
 
-                        try {
-                            int post_id = 0;
-                            post_id = (int) HoplyRepository
-                                    .getInstance( getApplicationContext() )
-                                    .insertPostsReturnId(newPost);
+            // Creates the post and gets user location.
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+
+                // If permission to use location data has been granted, get the position.
+                if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED){
+                    Post newPost = new Post(currentUserId, postContent, "time");
+
+                    try {
+                        int post_id = 0;
+                        post_id = (int) HoplyRepository
+                                .getInstance( getApplicationContext() )
+                                .insertPostsReturnId(newPost);
 
 
-                            int finalPost_id = post_id;
-                            locationProviderClient.getLastLocation()
-                                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        int finalPost_id = post_id;
 
-                                        @Override
-                                        public void onSuccess(Location location) {
-                                            HoplyRepository.getInstance(getApplicationContext())
-                                                    .insertLocation(new MapLocationEntity(finalPost_id, location.getLatitude(),location.getLongitude()));
-                                            Log.d("Location", location.getLatitude() + " " + location.getLongitude() );
-                                        }
-                                    });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }else {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                        // Insert the location if possible.
+                        locationProviderClient.getLastLocation()
+                                .addOnSuccessListener(location -> {
+                                    HoplyRepository.getInstance(getApplicationContext())
+                                            .insertLocation(new MapLocationEntity(finalPost_id, location.getLatitude(),location.getLongitude()));
+                                    Log.d("Location", location.getLatitude() + " " + location.getLongitude() );
+                                });
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
+                // Otherwise, ask the user for permission to use location data.
+                } else {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
                 }
             }
-        } );
+        });
 
     }
 }

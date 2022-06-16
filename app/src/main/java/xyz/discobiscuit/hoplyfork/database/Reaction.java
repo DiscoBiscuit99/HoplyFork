@@ -49,10 +49,12 @@ public class Reaction {
 
     }
 
+    // Returns a new like reaction.
     public static Reaction newLike( String userId, int postId ) {
         return new Reaction( userId, postId, 1, "time" );
     }
 
+    // Returns a new dislike reaction.
     public static Reaction newDislike( String userId, int postId ) {
         return new Reaction( userId, postId, 2, "time" );
     }

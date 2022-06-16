@@ -13,4 +13,5 @@ public interface MapLocationDao {
 
     @Query("SELECT * FROM MapLocationEntity WHERE :post_id = :post_id LIMIT 1")
     MapLocationEntity findById(int post_id);
+
 }
