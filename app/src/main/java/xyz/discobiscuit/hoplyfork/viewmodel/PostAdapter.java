@@ -36,7 +36,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
     private HoplyRepository repository;
 
-
     private List<Post> posts = new ArrayList<>();
     private List<Reaction> reactions = new ArrayList<>();
     private Context context;

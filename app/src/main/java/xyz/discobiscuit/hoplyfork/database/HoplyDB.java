@@ -38,7 +38,7 @@ public abstract class HoplyDB extends RoomDatabase {
                                 HoplyDB.class,
                                 "HOPLY_DB" )
                             .fallbackToDestructiveMigration()
-                            .addCallback( roomCallback ) // TODO: rmeove
+                            .addCallback( roomCallback ) // NOTE: can be removed
                             .build();
 
             }
@@ -47,7 +47,6 @@ public abstract class HoplyDB extends RoomDatabase {
 
     }
 
-    /// TODO: remove ////////////////
     private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
 
         @Override
@@ -88,6 +87,5 @@ public abstract class HoplyDB extends RoomDatabase {
         }
 
     }
-    /// TODO ends ///////////////////////
 
 }
